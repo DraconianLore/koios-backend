@@ -1,24 +1,15 @@
-# README
+# Κοῖος (back-end)
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+---------------------------------------
 
-Things you may want to cover:
+## A full stack project built for our team final project at Lighthouse Labs. 
+### Tech Stack:
+- **Frontend**: React-Native [--> github repo](https://github.com/DraconianLore/Koios)
+- **Backend**: Ruby on Rails 
+- **Database**: PostgreSQL
 
-* Ruby version
+--------------------------------------
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+##Team members:
+- [Steven Wing](https://github.com/DraconianLore)
+- [Seth Marks](https://github.com/S-Marks)
