@@ -10,23 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_20_213710) do
+ActiveRecord::Schema.define(version: 2019_07_21_232256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "cyphers", force: :cascade do |t|
     t.string "title"
-    t.text "desctiption"
+    t.text "description"
     t.text "message"
     t.text "solution"
     t.boolean "encrypt"
     t.string "encryptionType", array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "mission_type_id"
   end
 
-  create_table "mission_types", force: :cascade do |t|
+  create_table "missionTypes", force: :cascade do |t|
     t.integer "type_id"
     t.boolean "photo"
     t.boolean "verification"
@@ -34,18 +35,20 @@ ActiveRecord::Schema.define(version: 2019_07_20_213710) do
     t.boolean "decryption"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "mission_id"
   end
 
   create_table "missions", force: :cascade do |t|
     t.string "status"
     t.integer "experience"
-    t.string "missionType"
+    t.string "type"
     t.datetime "startTime"
     t.datetime "endTime"
-    t.string "difficuilty"
+    t.string "difficulty"
     t.integer "verificationUsers", default: [], array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "photos", force: :cascade do |t|
@@ -55,6 +58,7 @@ ActiveRecord::Schema.define(version: 2019_07_20_213710) do
     t.binary "image"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "mission_type_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -77,6 +81,7 @@ ActiveRecord::Schema.define(version: 2019_07_20_213710) do
     t.integer "verifications"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "mission_type_id"
   end
 
 end
