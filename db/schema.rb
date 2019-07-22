@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_21_232256) do
+ActiveRecord::Schema.define(version: 2019_07_22_162056) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 2019_07_21_232256) do
     t.integer "mission_type_id"
   end
 
-  create_table "missionTypes", force: :cascade do |t|
+  create_table "mission_types", force: :cascade do |t|
     t.integer "type_id"
     t.boolean "photo"
     t.boolean "verification"
