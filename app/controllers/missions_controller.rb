@@ -11,7 +11,12 @@ class MissionsController < ApplicationController
         user.missions.each do |m|
             if m.status != 'open'
                 completeTime = time_ago_in_words(m.endTime)
-                missionDetails = "Type: #{m.mType} - Difficulty: #{m.difficulty} - Completed: #{completeTime} ago - Result: #{m.status.upcase}"
+                missionDetails = {
+                    Type: {m.mType},
+                    Difficulty: {m.difficulty},
+                    Completed: {completeTime},
+                    Result: {m.status.upcase}
+                }
                 missions.push(missionDetails)
             end
         end
