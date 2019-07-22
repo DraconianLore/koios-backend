@@ -1,5 +1,7 @@
 include ActionView::Helpers::DateHelper
 
+$encryptionType = JSON.parse(File.read('./app/assets/json/encTypes.json')).to_a
+$encryptionPhrases = JSON.parse(File.read('./app/assets/json/encPhrases.json')).to_a
 
 class MissionsController < ApplicationController
     def index
@@ -9,7 +11,7 @@ class MissionsController < ApplicationController
         user.missions.each do |m|
             if m.status != 'open'
                 completeTime = time_ago_in_words(m.endTime)
-                missionDetails = "Type: #{m.type} - Difficulty: #{m.difficulty} - Completed: #{completeTime} ago - Result: #{m.status.upcase}"
+                missionDetails = "Type: #{m.mType} - Difficulty: #{m.difficulty} - Completed: #{completeTime} ago - Result: #{m.status.upcase}"
                 missions.push(missionDetails)
             end
         end
@@ -33,20 +35,61 @@ class MissionsController < ApplicationController
                 message: "Sorry Agent #{user.surname}, you still have an active mission"
             }
         end
+
         mission = Mission.new
         mission.user = user
         mission.status = 'open'
         mission.difficulty = generateMissionDifficulty.sample
-        mission.type = generateMissionType(user).sample
+        mission.mType = generateMissionType(user).sample
         mission.experience = generateExperience(mission).sample
+        mt = MissionType.new
+        mt[mission.mType] = true;
+        type = generateMissionByType(mission.mType);
+        
+        mission.save!
+        mt.mission = mission
+        mt.save!
+        type.mission_type = mt
+        type.save!
+        mt.type_id = type.id
+        mt.save
 
         render :json => {
-            message: mission
+            message: mission,
+            type: mt,
+            mission: type
         }
     end
 
 
 private
+
+    def generateMissionByType(type)
+        case type
+        when "photo"
+            mission = Photo.new
+        when "encryption"
+            mission = Cypher.new
+            mission.encrypt = true
+            mission.encryptionType = $encryptionType.sample
+            mission.title = "Encrypt this using #{mission.encryptionType}"
+            mission.message = $encryptionPhrases.sample
+
+            # temp hardcoding
+            mission.solution = mission.message.reverse
+
+        when "decryption"
+            mission = Cypher.new
+            mission.encrypt = false
+            mission.encryptionType = $encryptionType.sample
+            mission.title = "Decrypt this using #{mission.encryptionType}"
+            mission.solution = $encryptionPhrases.sample
+            
+            # temp hardcoding
+            mission.message = mission.solution.reverse
+        end
+        mission
+    end
 
     def generateMissionDifficulty()
         difficulty = []

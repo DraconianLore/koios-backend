@@ -20,6 +20,7 @@ user.save!
 miss = Mission.new
 miss.status = 'complete'
 miss.experience = 10
+miss.mType = 'photo'
 miss.startTime = 1.day.ago
 miss.endTime = 18.hours.ago
 miss.difficulty = 'Easy'
@@ -29,15 +30,9 @@ miss.save!
 miss = Mission.new
 miss.status = 'failed'
 miss.experience = 10
+miss.mType = 'photo'
 miss.startTime = 12.hours.ago
 miss.endTime = 11.hours.ago
-miss.difficulty = 'Easy'
-miss.user = User.first
-miss.save!
-
-miss = Mission.new
-miss.status = 'open'
-miss.experience = 12
 miss.difficulty = 'Easy'
 miss.user = User.first
 miss.save!
