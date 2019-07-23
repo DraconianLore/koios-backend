@@ -12,10 +12,11 @@ class MissionsController < ApplicationController
             if m.status != 'open'
                 completeTime = time_ago_in_words(m.endTime)
                 missionDetails = {
-                    Type: {m.mType},
-                    Difficulty: {m.difficulty},
-                    Completed: {completeTime},
-                    Result: {m.status.upcase}
+                    id: m.id,
+                    type: m.mType,
+                    difficulty: m.difficulty,
+                    completed: completeTime,
+                    result: m.status.upcase
                 }
                 missions.push(missionDetails)
             end
