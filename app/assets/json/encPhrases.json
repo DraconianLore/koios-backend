@@ -1,3 +1,5 @@
-[
-    "this sucks", "what is your plan for today?"
-]
+{
+    "Easy": ["this:; sucks", "what is your plan: for today?"],
+    "Medium": ["this is a medium puzzle", "no implicit conversion of String into Integer"],
+    "Hard": ["Pieces of Eight lateen sail piracy shrouds provost scurvy pressgang yawl salmagundi starboard. Jolly Roger Yellow Jack chantey measured fer yer chains grapple Pirate Round wherry gibbet barque ho. Gold Road code of conduct sutler barque grog Jolly Roger case shot wherry square-rigged walk the plank"]
+}
