@@ -1,5 +1,28 @@
 {
-    "Easy": ["this:; sucks", "what is your plan: for today?"],
-    "Medium": ["this is a medium puzzle", "no implicit conversion of String into Integer"],
-    "Hard": ["Pieces of Eight lateen sail piracy shrouds provost scurvy pressgang yawl salmagundi starboard. Jolly Roger Yellow Jack chantey measured fer yer chains grapple Pirate Round wherry gibbet barque ho. Gold Road code of conduct sutler barque grog Jolly Roger case shot wherry square-rigged walk the plank"]
+    "Easy": [
+        "this sucks",
+        "what is your plan for today",
+        "groovy baby",
+        "vignere",
+        "gronsfeld",
+        "operative"
+    ],
+
+    "Medium": [
+        "Secret agent man secret agent man They've given you a number and taken away your name",
+        "When we have shuffled off this mortal coil Must give us pause Theres the respect That makes calamity of so long life",
+        "How often have I said that when you have excluded the impossible whatever remains however improbable must be the truth"
+
+    ],
+
+    "Hard": [
+        "When we have shuffled off this mortal coil Must give us pause Theres the respect That makes calamity of so long life",
+        "According to all known laws of aviation there is no way a bee should be able to fly Its wings are too small to get its fat little body off the ground The bee of course flies anyway because bees dont care what humans think is impossible"
+
+    ],
+
+    "Impossible": [
+        "A wealthy wise old woman feared that her daughter was lazy and, as a result, rather stupid. When the old woman died, her will stipulated that her assets were to be liquidated and a check was to be written for the full amount. The check was to be placed in one of three envelopes. The other two envelopes would contain a blank piece of paper. If the daughter could determine from the writing on the envelope which envelope contained the check, she would inherit her mother’s fortune. Otherwise, the fortune would go to the old woman’s favorite charity for animals. The daughter was not allowed to touch the envelopes. Her decision had to be made based on the writing on the envelopes. The daughter was told that only one envelope had a true statement and that the other two statements were false. The envelopes had the following writing: This envelope does not have the check. This envelope has the check. The second envelope does not have the check. Which envelope should the daughter pick?"
+    ]
+
 }
