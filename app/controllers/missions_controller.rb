@@ -32,10 +32,12 @@ class MissionsController < ApplicationController
         # user accepts a mission
         if params[:id] == 'accepted'
             mission = user.missions.last
-            mission.startTime = 1.second.ago
-            mission.endTime = Time.now + (mission.missionTime * 60)
-            mission.status = 'current'
-            mission.save!
+            if mission.status == 'open'
+                mission.startTime = 1.second.ago
+                mission.endTime = Time.now + (mission.missionTime * 60)
+                mission.status = 'current'
+                mission.save!
+            end
             message = {
                 id: mission.id,
                 start: mission.startTime,
@@ -58,6 +60,44 @@ class MissionsController < ApplicationController
             }
         end
           
+    end
+
+    skip_before_action :verify_authenticity_token
+    def update
+
+        incomingData = params[:message]
+        puts '############'
+        puts incomingData
+        puts '############'
+
+        user = User.find(params[:user_id])
+        if params[:id] == 'verify'
+            mission = user.missions.last
+            if mission.status == 'current'
+                # Verify mission is complete - send back incorrect if verification fails
+                mt = mission.mission_type
+                puts mission.mType
+                if mt.photo
+                    mt = Photo.find(mt.type_id)
+                elsif mt.encryption || mt.decryption
+                    mt = Cypher.find(mt.type_id)
+                    if incomingData == mt.solution
+                        puts 'Mission: SUCCESS'
+                        mission.status = 'completed'
+                        render :json => {
+                            message: 'MISSION COMPLETE'
+                        }
+                    else
+                        puts "#{incomingData} does not match #{mt.solution}"
+                    end
+                else
+                    mt = Verification.find(mt.type_id)
+                end
+
+            else
+                redirect_to action: "new" and return
+            end
+        end
     end
 
     def new
