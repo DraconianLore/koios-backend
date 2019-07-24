@@ -30,6 +30,11 @@ class MissionsController < ApplicationController
     def show
         user = User.find(params[:user_id])
         # user accepts a mission
+        if params[:id] == 'test'
+            render :json => {
+                msg: CyphersHelper.cypher("number", "abcd 1234 test")
+            }
+        end
         if params[:id] == 'accepted'
             mission = user.missions.last
             if mission.status == 'open'
@@ -102,9 +107,9 @@ class MissionsController < ApplicationController
 
     def new
         user = User.find(params[:user_id])
-        if user.missions.last.status == 'open' || user.missions.last.status == 'current'
-            redirect_to action: "show", id: 'accepted' and return
-        end
+        # if user.missions.last.status == 'open' || user.missions.last.status == 'current'
+        #     redirect_to action: "show", id: 'accepted' and return
+        # end
         mission = Mission.new
         mission.user = user
         mission.status = 'open'
