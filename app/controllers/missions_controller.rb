@@ -63,6 +63,20 @@ class MissionsController < ApplicationController
             render :json => {
                 message: message
             }
+        elsif params[:id] == 'rejected'
+            mission = user.missions.last
+            if mission.mType = 'verification'
+                V = Verification.find(mission.mType.type_id)
+                V.verifications += 1
+            end
+            mission.status = 'rejected'
+            mission.endTime = Time.now
+            mission.save!
+        elsif params[:id] == 'failed'
+            mission = user.missions.last
+            mission.status = 'failed'
+            mission.endTime = Time.now
+            mission.save!
         elsif params[:id] == 'current'
             mission = user.missions.last
             if mission.status == 'open'
@@ -118,24 +132,49 @@ class MissionsController < ApplicationController
         if params[:id] == 'verify'
             mission = user.missions.last
             if mission.status == 'current'
-                # Verify mission is complete - send back incorrect if verification fails
                 mt = mission.mission_type
                 puts mission.mType
                 if mt.photo
                     mt = Photo.find(mt.type_id)
+                    verifyCandidates = []
+                    users = User.all
+                    
+                    users.each do |u|
+                        if u.missions.last != 'open' || u.missions.last != 'current'
+                            verifyCandidates.push(u)
+                        end
+                    end
+
+                    while mission.verificationUsers.length < 5 do
+                        candidate = verifyCandidates.sample
+                        if mission.verificationUsers.exclude?(candidate)
+                            mission.verificationUsers.push(candidate)
+                        end
+                    end
                 elsif mt.encryption || mt.decryption
                     mt = Cypher.find(mt.type_id)
                     if incomingData == mt.solution
                         puts 'Mission: SUCCESS'
                         mission.status = 'completed'
+                        mission.endTime = Time.now
                         render :json => {
                             message: 'MISSION COMPLETE'
                         }
                     else
                         puts "#{incomingData} does not match #{mt.solution}"
                     end
-                else
-                    mt = Verification.find(mt.type_id)
+                elsif mt.verification
+                    verification = Verification.find(mt.type_id)
+                    if verification.verifications >= 3
+                        puts 'Mission: SUCCESS'
+                        mission.status = 'completed'
+                        mission.endTime = Time.now
+                        render :json => {
+                            message: 'MISSION COMPLETE'
+                        }
+                    else
+                        puts "Your submission has been denied."
+                    end
                 end
 
             else
