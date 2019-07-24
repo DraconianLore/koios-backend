@@ -37,7 +37,7 @@ class MissionsController < ApplicationController
         end
         if params[:id] == 'accepted'
             mission = user.missions.last
-            if mission.status == 'open'
+            if mission.status == 'open' || mission.status == 'current'
                 mission.startTime = 1.second.ago
                 mission.endTime = Time.now + (mission.missionTime * 60)
                 mission.status = 'current'
@@ -63,6 +63,45 @@ class MissionsController < ApplicationController
             render :json => {
                 message: message
             }
+        elsif params[:id] == 'current'
+            mission = user.missions.last
+            if mission.status == 'open'
+                message = {
+                    available: true,
+                    mTime: mission.missionTime,
+                    mType: mission.mType,
+                    mDifficulty: mission.difficulty
+                }
+
+                render :json => {
+                    message: message
+                }
+            elsif mission.status == 'current'
+                message = {
+                    current: true,
+                    endTime: mission.endTime
+                }
+                mt = mission.mission_type
+                if mt.photo
+                    mt = Photo.find(mt.type_id)
+                elsif mt.encryption || mt.decryption
+                    mt = Cypher.find(mt.type_id)
+                    message[:message] = mt.message
+                else
+                    mt = Verification.find(mt.type_id)
+                end
+                message[:description] = mt.description
+                message[:title] = mt.title
+
+                render :json => {
+                    message: message
+                }
+            else
+                render :json => {
+                    message: 'no mission'
+                }
+            end
+
         end
           
     end
