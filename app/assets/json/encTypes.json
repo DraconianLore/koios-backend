@@ -1,5 +1,6 @@
 [
-    "reverse", "reverse", "reverse", "reverse", 
+    "reverse", "reverse", "reverse", "reverse",
+    "number" , "number" , "number" , "number" ,
     "letterShift1", "letterShift2", "letterShift3", "letterShift4", "letterShift5", "letterShift6", "letterShift7", "letterShift8",
     "letterSlip1", "letterSlip2", "letterSlip3", "letterSlip4", "letterSlip5", "letterSlip6", "letterSlip7", "letterSlip8"
 ]
