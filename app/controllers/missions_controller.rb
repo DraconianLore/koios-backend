@@ -79,7 +79,6 @@ class MissionsController < ApplicationController
         message: 'go fuck yourself'
       }
     elsif params[:id] == 'failed'
-      puts '#######NOW YOU FUCKED UP!########'
       mission = user.missions.last
       mission.status = 'failed'
       mission.endTime = Time.now
@@ -164,19 +163,23 @@ class MissionsController < ApplicationController
           mt = Cypher.find(mt.type_id)
           if incomingData == mt.solution
             puts 'Mission: SUCCESS'
-            mission.status = 'completed'
+            mission.status = 'complete'
             mission.endTime = Time.now
+            mission.save!
             render json: {
               message: 'MISSION COMPLETE'
             }
           else
             puts "#{incomingData} does not match #{mt.solution}"
+            render json: {
+              message: 'SUBMISSION INVALID'
+            }
           end
         elsif mt.verification
           verification = Verification.find(mt.type_id)
           if verification.verifications >= 3
             puts 'Mission: SUCCESS'
-            mission.status = 'completed'
+            mission.status = 'complete'
             mission.endTime = Time.now
             render json: {
               message: 'MISSION COMPLETE'
