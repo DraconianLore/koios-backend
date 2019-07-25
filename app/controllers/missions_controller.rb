@@ -70,14 +70,23 @@ class MissionsController < ApplicationController
         v = Verification.find(mission.mType.type_id)
         v.verifications += 1
       end
+      puts '###### REJECT #####'
       mission.status = 'rejected'
       mission.endTime = Time.now
       mission.save!
+
+      render json: {
+        message: 'go fuck yourself'
+      }
     elsif params[:id] == 'failed'
+      puts '#######NOW YOU FUCKED UP!########'
       mission = user.missions.last
       mission.status = 'failed'
       mission.endTime = Time.now
       mission.save!
+      render json: {
+        message: 'go fuck yourself twice'
+      }
     elsif params[:id] == 'current'
       mission = user.missions.last
       if mission.status == 'open'
