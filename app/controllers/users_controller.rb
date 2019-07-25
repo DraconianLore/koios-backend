@@ -11,12 +11,14 @@ class UsersController < ApplicationController
             userId = User.find(params[:id])
             agentName = userId.surname
             message = "Welcome back Agent #{agentName}"
+            exp = userId.experience
         else
             message = "Unauthorized access!"
         end
 
         render :json => {
-            message: message
+            message: message,
+            experience: exp
         }
             
     end

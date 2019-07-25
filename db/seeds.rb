@@ -15,7 +15,7 @@ user.firstName = 'Mister'
 user.email = 'smith@agents.matrix'
 user.password = 'smith'
 user.rank = 2
-user.experience = 20
+user.experience = 482
 user.save!
 
 user = User.new
