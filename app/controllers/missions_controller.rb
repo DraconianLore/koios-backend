@@ -70,8 +70,8 @@ class MissionsController < ApplicationController
         elsif params[:id] == 'rejected'
             mission = user.missions.last
             if mission.mType = 'verification'
-                V = Verification.find(mission.mType.type_id)
-                V.verifications += 1
+              v = Verification.find(mission.mType.type_id)
+              v.verifications += 1
             end
             mission.status = 'rejected'
             mission.endTime = Time.now
@@ -90,7 +90,6 @@ class MissionsController < ApplicationController
                     mType: mission.mType,
                     mDifficulty: mission.difficulty
                 }
-
                 render :json => {
                     message: message
                 }
