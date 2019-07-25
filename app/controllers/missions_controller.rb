@@ -2,6 +2,7 @@
 
 include ActionView::Helpers::DateHelper
 include CyphersHelper
+include MissionHelper
 
 $encryptionType = JSON.parse(File.read('./app/assets/json/encTypes.json')).to_a
 $encryptionPhrases = JSON.parse(File.read('./app/assets/json/encPhrases.json'))
@@ -44,89 +45,33 @@ class MissionsController < ApplicationController
         mission.status = 'current'
         mission.save!
       end
-      message = {
-        id: mission.id,
-        start: mission.startTime,
-        end: mission.endTime
-      }
-      mt = mission.mission_type
-      if mt.photo
-        mt = Photo.find(mt.type_id)
-      elsif mt.encryption || mt.decryption
-        mt = Cypher.find(mt.type_id)
-        message[:message] = mt.message
-      else
-        mt = Verification.find(mt.type_id)
-      end
-      message[:description] = mt.description
-      message[:title] = mt.title
-
-      render json: {
-        message: message
-      }
+      message = MissionHelper.acceptMission(mission)
     elsif params[:id] == 'rejected'
       mission = user.missions.last
-      if mission.mType = 'verification'
-        v = Verification.find(mission.mission_type.type_id)
-        v.verifications += 1
-      end
-      puts '###### REJECT #####'
-      mission.status = 'rejected'
-      mission.endTime = Time.now
-      mission.save!
-
-      render json: {
-        message: 'go fuck yourself'
-      }
+      MissionHelper.rejectMission(mission)
+      message = 'well I dont have time for you either'
     elsif params[:id] == 'failed'
       puts '#######NOW YOU FUCKED UP!########'
       mission = user.missions.last
       mission.status = 'failed'
       mission.endTime = Time.now
       mission.save!
-      render json: {
-        message: 'go fuck yourself twice'
-      }
+      message = 'you are not fit to be an agent!'
+
+      # check for missions from front end
     elsif params[:id] == 'current'
       mission = user.missions.last
-      if mission.status == 'open'
-        message = {
-          available: true,
-          mTime: mission.missionTime,
-          mType: mission.mType,
-          mDifficulty: mission.difficulty
-        }
-
-        render json: {
-          message: message
-        }
-      elsif mission.status == 'current'
-        message = {
-          current: true,
-          endTime: mission.endTime
-        }
-        mt = mission.mission_type
-        if mt.photo
-          mt = Photo.find(mt.type_id)
-        elsif mt.encryption || mt.decryption
-          mt = Cypher.find(mt.type_id)
-          message[:message] = mt.message
-        else
-          mt = Verification.find(mt.type_id)
-        end
-        message[:description] = mt.description
-        message[:title] = mt.title
-
-        render json: {
-          message: message
-        }
-      else
-        render json: {
-          message: 'no mission'
-        }
-      end
-
+      message = if mission.status == 'open' # Mission is available...
+                  MissionHelper.openMission(mission)
+                elsif mission.status == 'current' # Mission is active
+                  MissionHelper.currentMission(mission)
+                else
+                  'no mission'
+                end
     end
+    render json: {
+      message: message
+    }
   end
 
   skip_before_action :verify_authenticity_token
