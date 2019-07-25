@@ -111,6 +111,8 @@ class MissionsController < ApplicationController
             mission.status = 'complete'
             mission.endTime = Time.now
             mission.save!
+            user.experience += mission.experience
+            user.save!
             render json: {
               message: 'MISSION COMPLETE'
             }
