@@ -11,193 +11,37 @@ class MissionsController < ApplicationController
     user = User.find(params[:user_id])
     missions = []
     user.missions.each do |m|
-      unless m.status == 'open' || m.status == 'current' || m.status == 'rejected'
-        completeTime = time_ago_in_words(m.endTime)
-        missionDetails = {
-          id: m.id,
-          type: m.mType,
-          difficulty: m.difficulty,
-          completed: completeTime,
-          result: m.status.upcase
-        }
-        missions.push(missionDetails)
-      end
+      next if m.status == 'open' || m.status == 'current' || m.status == 'rejected'
+
+      completeTime = time_ago_in_words(m.endTime)
+      missionDetails = {
+        id: m.id,
+        type: m.mType,
+        difficulty: m.difficulty,
+        completed: completeTime,
+        result: m.status.upcase
+      }
+      missions.push(missionDetails)
+    end
+    render json: {
+      message: missions
+    }
+  end
+
+  def show
+    user = User.find(params[:user_id])
+    # user accepts a mission
+    if params[:id] == 'test'
       render json: {
-          message: missions
+        msg: CyphersHelper.cypher('number', 'abcd 1234 test')
       }
     end
-
-    def show
-        user = User.find(params[:user_id])
-        # user accepts a mission
-        if params[:id] == 'test'
-            render :json => {
-                msg: CyphersHelper.cypher("number", "abcd 1234 test")
-            }
-        end
-        if params[:id] == 'accepted'
-            mission = user.missions.last
-            if mission.status == 'open' || mission.status == 'current'
-                mission.startTime = 1.second.ago
-                mission.endTime = Time.now + (mission.missionTime * 60)
-                mission.status = 'current'
-                mission.save!
-            end
-            message = {
-                id: mission.id,
-                start: mission.startTime,
-                end: mission.endTime,
-            }
-            mt = mission.mission_type
-            if mt.photo
-                mt = Photo.find(mt.type_id)
-            elsif mt.encryption || mt.decryption
-                mt = Cypher.find(mt.type_id)
-                message[:message] = mt.message
-            else
-                mt = Verification.find(mt.type_id)
-            end
-            message[:description] = mt.description
-            message[:title] = mt.title
-
-            render :json => {
-                message: message
-            }
-        elsif params[:id] == 'rejected'
-            mission = user.missions.last
-            if mission.mType = 'verification'
-              v = Verification.find(mission.mType.type_id)
-              v.verifications += 1
-            end
-            mission.status = 'rejected'
-            mission.endTime = Time.now
-            mission.save!
-        elsif params[:id] == 'failed'
-            mission = user.missions.last
-            mission.status = 'failed'
-            mission.endTime = Time.now
-            mission.save!
-        elsif params[:id] == 'current'
-            mission = user.missions.last
-            if mission.status == 'open'
-                message = {
-                    available: true,
-                    mTime: mission.missionTime,
-                    mType: mission.mType,
-                    mDifficulty: mission.difficulty
-                }
-                render :json => {
-                    message: message
-                }
-            elsif mission.status == 'current'
-                message = {
-                    current: true,
-                    endTime: mission.endTime
-                }
-                mt = mission.mission_type
-                if mt.photo
-                    mt = Photo.find(mt.type_id)
-                elsif mt.encryption || mt.decryption
-                    mt = Cypher.find(mt.type_id)
-                    message[:message] = mt.message
-                else
-                    mt = Verification.find(mt.type_id)
-                end
-                message[:description] = mt.description
-                message[:title] = mt.title
-
-                render :json => {
-                    message: message
-                }
-            else
-                render :json => {
-                    message: 'no mission'
-                }
-            end
-
-        end
-          
-    end
-
-    skip_before_action :verify_authenticity_token
-    def update
-
-        incomingData = params[:message]
-        puts '############'
-        puts incomingData
-        puts '############'
-
-        user = User.find(params[:user_id])
-        if params[:id] == 'verify'
-            mission = user.missions.last
-            if mission.status == 'current'
-                mt = mission.mission_type
-                puts mission.mType
-                if mt.photo
-                    mt = Photo.find(mt.type_id)
-                    verifyCandidates = []
-                    users = User.all
-                    
-                    users.each do |u|
-                        if u.missions.last != 'open' || u.missions.last != 'current'
-                            verifyCandidates.push(u)
-                        end
-                    end
-
-                    while mission.verificationUsers.length < 5 do
-                        candidate = verifyCandidates.sample
-                        if mission.verificationUsers.exclude?(candidate)
-                            mission.verificationUsers.push(candidate)
-                        end
-                    end
-                elsif mt.encryption || mt.decryption
-                    mt = Cypher.find(mt.type_id)
-                    if incomingData == mt.solution
-                        puts 'Mission: SUCCESS'
-                        mission.status = 'completed'
-                        mission.endTime = Time.now
-                        render :json => {
-                            message: 'MISSION COMPLETE'
-                        }
-                    else
-                        puts "#{incomingData} does not match #{mt.solution}"
-                    end
-                elsif mt.verification
-                    verification = Verification.find(mt.type_id)
-                    if verification.verifications >= 3
-                        puts 'Mission: SUCCESS'
-                        mission.status = 'completed'
-                        mission.endTime = Time.now
-                        render :json => {
-                            message: 'MISSION COMPLETE'
-                        }
-                    else
-                        puts "Your submission has been denied."
-                    end
-                end
-
-            else
-                redirect_to action: "new" and return
-            end
-        end
-    end
-
-    def new
-        user = User.find(params[:user_id])
-        # if user.missions.last.status == 'open' || user.missions.last.status == 'current'
-        #     redirect_to action: "show", id: 'accepted' and return
-        # end
-        mission = Mission.new
-        mission.user = user
-        mission.status = 'open'
-        mission.difficulty = generateMissionDifficulty.sample
-        mission.mType = generateMissionType(user).sample
-        mission.experience = generateExperience(mission).sample
-        mission.missionTime = generateMissionTime(mission)
-        mt = MissionType.new
-        mt[mission.mType] = true;
-        misType = generateMissionByType(mission.mType, mission.difficulty);
-        
+    if params[:id] == 'accepted'
+      mission = user.missions.last
+      if mission.status == 'open' || mission.status == 'current'
+        mission.startTime = 1.second.ago
+        mission.endTime = Time.now + (mission.missionTime * 60)
+        mission.status = 'current'
         mission.save!
       end
       message = {
@@ -220,6 +64,20 @@ class MissionsController < ApplicationController
       render json: {
         message: message
       }
+    elsif params[:id] == 'rejected'
+      mission = user.missions.last
+      if mission.mType = 'verification'
+        v = Verification.find(mission.mType.type_id)
+        v.verifications += 1
+      end
+      mission.status = 'rejected'
+      mission.endTime = Time.now
+      mission.save!
+    elsif params[:id] == 'failed'
+      mission = user.missions.last
+      mission.status = 'failed'
+      mission.endTime = Time.now
+      mission.save!
     elsif params[:id] == 'current'
       mission = user.missions.last
       if mission.status == 'open'
@@ -278,19 +136,45 @@ class MissionsController < ApplicationController
         puts mission.mType
         if mt.photo
           mt = Photo.find(mt.type_id)
+          verifyCandidates = []
+          users = User.all
+
+          users.each do |u|
+            if u.missions.last != 'open' || u.missions.last != 'current'
+              verifyCandidates.push(u)
+            end
+          end
+
+          while mission.verificationUsers.length < 5
+            candidate = verifyCandidates.sample
+            if mission.verificationUsers.exclude?(candidate)
+              mission.verificationUsers.push(candidate)
+            end
+          end
         elsif mt.encryption || mt.decryption
           mt = Cypher.find(mt.type_id)
           if incomingData == mt.solution
             puts 'Mission: SUCCESS'
             mission.status = 'completed'
+            mission.endTime = Time.now
             render json: {
               message: 'MISSION COMPLETE'
             }
           else
             puts "#{incomingData} does not match #{mt.solution}"
           end
-        else
-          mt = Verification.find(mt.type_id)
+        elsif mt.verification
+          verification = Verification.find(mt.type_id)
+          if verification.verifications >= 3
+            puts 'Mission: SUCCESS'
+            mission.status = 'completed'
+            mission.endTime = Time.now
+            render json: {
+              message: 'MISSION COMPLETE'
+            }
+          else
+            puts 'Your submission has been denied.'
+          end
         end
       else
         redirect_to(action: 'new') && return
