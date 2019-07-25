@@ -67,7 +67,7 @@ class MissionsController < ApplicationController
     elsif params[:id] == 'rejected'
       mission = user.missions.last
       if mission.mType = 'verification'
-        v = Verification.find(mission.mType.type_id)
+        v = Verification.find(mission.mission_type.type_id)
         v.verifications += 1
       end
       puts '###### REJECT #####'
