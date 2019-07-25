@@ -9,13 +9,9 @@ $encryptionPhrases = JSON.parse(File.read('./app/assets/json/encPhrases.json'))
 class MissionsController < ApplicationController
   def index
     user = User.find(params[:user_id])
-    puts user.missions.inspect
     missions = []
     user.missions.each do |m|
-      puts "first shitty thing #{m.status}"
       unless m.status == 'open' || m.status == 'current' || m.status == 'rejected'
-
-        puts "second shitty thing #{m.status}"
         completeTime = time_ago_in_words(m.endTime)
         missionDetails = {
           id: m.id,
