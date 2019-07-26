@@ -183,6 +183,8 @@ class MissionsController < ApplicationController
     case type
     when 'photo'
       mission = Photo.new
+      mission.title = "Take a photo of <GOVIND>"
+      mission.description = 'Without his knowledge!'
     when 'encryption'
       mission = Cypher.new
       mission.encrypt = true
@@ -216,7 +218,7 @@ class MissionsController < ApplicationController
   def generateMissionType(user)
     missionChoices = []
     if user.rank > 0
-      # missionChoices.push('photo')
+      missionChoices.push('photo')
     end
     if user.rank > 1
       missionChoices.push('encryption')

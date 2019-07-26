@@ -36,8 +36,9 @@ module MissionHelper
   def currentMission(mission)
     mEndTime = (mission.endTime).to_f * 1000
     message = {
-      current: true,
-      endTime: mEndTime
+        current: true,
+        endTime: mEndTime,
+        mType: mission.mType
     }
     mt = mission.mission_type
     if mt.photo
