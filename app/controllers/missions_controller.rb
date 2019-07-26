@@ -69,7 +69,8 @@ class MissionsController < ApplicationController
                 end
     end
     render json: {
-      message: message
+      message: message,
+      experience: user.experience
     }
   end
 
