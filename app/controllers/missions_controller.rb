@@ -84,6 +84,7 @@ class MissionsController < ApplicationController
   skip_before_action :verify_authenticity_token
   def update
     incomingData = params[:message]
+    incomingPhoto = params[:photo]
     puts '############'
     puts incomingData
     puts '############'
@@ -103,6 +104,9 @@ class MissionsController < ApplicationController
           user.experience += mission.experience
           user.save!
 
+          mt.image = incomingPhoto
+          # send image to hosting, get url,
+
           users.each do |u|
             if u.missions.last != 'open' || u.missions.last != 'current'
               verifyCandidates.push(u)
@@ -115,7 +119,7 @@ class MissionsController < ApplicationController
               mission.verificationUsers.push(candidate)
             end
           end
-
+          # send url to candidates as veirification mission
         elsif mt.encryption || mt.decryption
           mt = Cypher.find(mt.type_id)
           if incomingData == mt.solution
@@ -198,7 +202,7 @@ class MissionsController < ApplicationController
     case type
     when 'photo'
       mission = Photo.new
-      mission.title = "Take a photo of GOVIND"
+      mission.title = 'Take a photo of GOVIND'
       mission.description = 'Taken without his knowledge!'
     when 'encryption'
       mission = Cypher.new
@@ -232,9 +236,7 @@ class MissionsController < ApplicationController
 
   def generateMissionType(user)
     missionChoices = []
-    if user.rank > 0
-      missionChoices.push('photo')
-    end
+    missionChoices.push('photo') if user.rank > 0
     if user.rank > 1
       missionChoices.push('encryption')
       missionChoices.push('decryption')
