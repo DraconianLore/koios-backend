@@ -183,8 +183,8 @@ class MissionsController < ApplicationController
     case type
     when 'photo'
       mission = Photo.new
-      mission.title = "Take a photo of <GOVIND>"
-      mission.description = 'Without his knowledge!'
+      mission.title = "Take a photo of GOVIND"
+      mission.description = 'Taken without his knowledge!'
     when 'encryption'
       mission = Cypher.new
       mission.encrypt = true

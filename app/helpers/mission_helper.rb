@@ -43,6 +43,7 @@ module MissionHelper
     mt = mission.mission_type
     if mt.photo
       mt = Photo.find(mt.type_id)
+      message[:message] = mt.description
     elsif mt.encryption || mt.decryption
       mt = Cypher.find(mt.type_id)
       message[:message] = mt.message
