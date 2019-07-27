@@ -60,6 +60,13 @@ class MissionsController < ApplicationController
       # check for missions from front end
     elsif params[:id] == 'current'
       mission = user.missions.last
+      if mission.status == 'open'
+
+      elsif MissionHelper.missionExpired(mission)
+        redirect_to action: 'new'
+
+        mission = user.missions.last
+      end
       message = if mission.status == 'open' # Mission is available...
                   MissionHelper.openMission(mission)
                 elsif mission.status == 'current' # Mission is active
@@ -88,10 +95,13 @@ class MissionsController < ApplicationController
         # Verify mission is complete - send back incorrect on verification fails
         mt = mission.mission_type
         puts mission.mType
+
         if mt.photo
           mt = Photo.find(mt.type_id)
           verifyCandidates = []
           users = User.all
+          user.experience += mission.experience
+          user.save!
 
           users.each do |u|
             if u.missions.last != 'open' || u.missions.last != 'current'
@@ -105,6 +115,7 @@ class MissionsController < ApplicationController
               mission.verificationUsers.push(candidate)
             end
           end
+
         elsif mt.encryption || mt.decryption
           mt = Cypher.find(mt.type_id)
           if incomingData == mt.solution
@@ -123,12 +134,15 @@ class MissionsController < ApplicationController
               message: 'SUBMISSION INVALID'
             }
           end
+
         elsif mt.verification
           verification = Verification.find(mt.type_id)
           if verification.verifications >= 3
             puts 'Mission: SUCCESS'
             mission.status = 'complete'
             mission.endTime = Time.now
+            user.experience += mission.experience
+            user.save!
             render json: {
               message: 'MISSION COMPLETE'
             }
@@ -136,6 +150,7 @@ class MissionsController < ApplicationController
             puts 'Your submission has been denied.'
           end
         end
+
       else
         redirect_to(action: 'new') && return
       end

@@ -1,0 +1,28 @@
+{
+    "Easy": [
+        "a tree.",
+        "a skyscraper.",
+        "someone in a red shirt.",
+        "someone in a green shirt.",
+        "someone in a blue shirt."
+    ],
+
+    "Medium": [
+        "a construction crane.",
+        "a bird in flight."
+
+    ],
+
+    "Hard": [
+        "at least three dogs in the frame.",
+        "a duck.",
+        "an emergency vehicle with flashing lights."
+    ],
+
+    "Impossible": [
+        "a view from the top of a mountain.",
+        "someone in a three piece suit.",
+        "yourself with a cultural landmark."
+    ]
+
+}

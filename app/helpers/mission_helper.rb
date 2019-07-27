@@ -34,7 +34,7 @@ module MissionHelper
     end
 
   def currentMission(mission)
-    mEndTime = (mission.endTime).to_f * 1000
+    mEndTime = mission.endTime.to_f * 1000
     message = {
       current: true,
       endTime: mEndTime
@@ -42,9 +42,11 @@ module MissionHelper
     mt = mission.mission_type
     if mt.photo
       mt = Photo.find(mt.type_id)
+      message[:message] = mt.description
     elsif mt.encryption || mt.decryption
       mt = Cypher.find(mt.type_id)
       message[:message] = mt.message
+      message[:description] = mt.description
     else
       mt = Verification.find(mt.type_id)
     end
@@ -62,5 +64,20 @@ module MissionHelper
       mDifficulty: mission.difficulty
     }
     message
+  end
+
+  def missionExpired(mission)
+    puts(mission.status)
+    puts('!!!!!!!!', mission.endTime)
+    puts('########', Time.now)
+    if mission.status == 'current'
+      puts(mission.endTime < Time.now)
+      if mission.endTime < Time.now
+        mission.status = 'failed'
+        mission.save!
+        true
+      end
     end
+    false
+  end
 end
