@@ -38,7 +38,8 @@ module MissionHelper
     message = {
         current: true,
         endTime: mEndTime,
-        mType: mission.mType
+        mType: mission.mType,
+        missionId: mission.id
     }
     mt = mission.mission_type
     if mt.photo

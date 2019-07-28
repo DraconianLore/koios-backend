@@ -3,6 +3,8 @@
 include ActionView::Helpers::DateHelper
 include CyphersHelper
 include MissionHelper
+include AwsHelper
+require 'base64'
 
 $encryptionType = JSON.parse(File.read('./app/assets/json/encTypes.json')).to_a
 $encryptionPhrases = JSON.parse(File.read('./app/assets/json/encPhrases.json'))
@@ -101,26 +103,38 @@ class MissionsController < ApplicationController
 
         if mt.photo
           mt = Photo.find(mt.type_id)
-          verifyCandidates = []
-          users = User.all
-          user.experience += mission.experience
-          user.save!
 
-          mt.image = incomingPhoto
           # send image to hosting, get url,
+          puts '^^^^^^^^^^^^Start image processing^^^^^^^^^^^^^^^^^^'
+          
+          image_path = "tmp/my_img#{params[:user_id]}.jpg"
+          content_length = incomingPhoto.size
+          my_read = incomingPhoto.read(content_length)
+          image = open(image_path, 'wb')
+          image.write(my_read)
+          image.close
+          
+          imageUrl = AwsHelper.uploadImage(image_path, params[:user_id])
+          mt.image = imageUrl
+          
+            render json: {
+              message: 'AWAITING VERIFICATION'
+            }
+          # verifyCandidates = []
+          # users = User.all
+          # users.each do |u|
+          #   if u.missions.last != 'open' || u.missions.last != 'current'
+          #     verifyCandidates.push(u)
+          #   end
+          # end
 
-          users.each do |u|
-            if u.missions.last != 'open' || u.missions.last != 'current'
-              verifyCandidates.push(u)
-            end
-          end
+          # while mission.verificationUsers.length < 5
+          #   candidate = verifyCandidates.sample
+          #   if mission.verificationUsers.exclude?(candidate)
+          #     mission.verificationUsers.push(candidate)
+          #   end
+          # end
 
-          while mission.verificationUsers.length < 5
-            candidate = verifyCandidates.sample
-            if mission.verificationUsers.exclude?(candidate)
-              mission.verificationUsers.push(candidate)
-            end
-          end
           # send url to candidates as veirification mission
         elsif mt.encryption || mt.decryption
           mt = Cypher.find(mt.type_id)
