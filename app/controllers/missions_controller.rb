@@ -6,6 +6,7 @@ include MissionHelper
 
 $encryptionType = JSON.parse(File.read('./app/assets/json/encTypes.json')).to_a
 $encryptionPhrases = JSON.parse(File.read('./app/assets/json/encPhrases.json'))
+$photoTypes = JSON.parse(File.read('./app/assets/json/picTypes.json'))
 
 class MissionsController < ApplicationController
   def index
@@ -24,8 +25,9 @@ class MissionsController < ApplicationController
       }
       missions.push(missionDetails)
     end
+    missions.reverse!
     render json: {
-      message: missions
+      message: missions[0..6]
     }
   end
 
@@ -202,8 +204,8 @@ class MissionsController < ApplicationController
     case type
     when 'photo'
       mission = Photo.new
-      mission.title = 'Take a photo of GOVIND'
-      mission.description = 'Taken without his knowledge!'
+      mission.title = 'TAKE A PHOTO OF'
+      mission.description = $photoTypes[difficulty].to_a.sample.downcase
     when 'encryption'
       mission = Cypher.new
       mission.encrypt = true
