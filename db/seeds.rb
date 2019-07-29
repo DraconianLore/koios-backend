@@ -18,6 +18,17 @@ user.rank = 2
 user.experience = 482
 user.save!
 
+miss = Mission.new
+miss.status = 'complete'
+miss.experience = 10
+miss.mType = 'photo'
+miss.startTime = 1.day.ago
+miss.endTime = 18.hours.ago
+miss.difficulty = 'Tutorial'
+miss.user = user
+miss.save!
+
+
 user = User.new
 user.surname = 'Bond'
 user.firstName = 'Mister'
@@ -26,6 +37,16 @@ user.password = 'bond'
 user.rank = 2
 user.experience = 20
 user.save!
+
+miss = Mission.new
+miss.status = 'complete'
+miss.experience = 10
+miss.mType = 'photo'
+miss.startTime = 1.day.ago
+miss.endTime = 18.hours.ago
+miss.difficulty = 'Tutorial'
+miss.user = user
+miss.save!
 
 user = User.new
 user.surname = 'Potatohead'
@@ -36,6 +57,16 @@ user.rank = 2
 user.experience = 20
 user.save!
 
+miss = Mission.new
+miss.status = 'complete'
+miss.experience = 10
+miss.mType = 'photo'
+miss.startTime = 1.day.ago
+miss.endTime = 18.hours.ago
+miss.difficulty = 'Tutorial'
+miss.user = user
+miss.save!
+
 user = User.new
 user.surname = 'Rogers'
 user.firstName = 'Mister'
@@ -44,6 +75,16 @@ user.password = 'rogers'
 user.rank = 2
 user.experience = 20
 user.save!
+
+miss = Mission.new
+miss.status = 'complete'
+miss.experience = 10
+miss.mType = 'photo'
+miss.startTime = 1.day.ago
+miss.endTime = 18.hours.ago
+miss.difficulty = 'Tutorial'
+miss.user = user
+miss.save!
 
 user = User.new
 user.surname = 'Potatohead'
@@ -54,6 +95,16 @@ user.rank = 2
 user.experience = 20
 user.save!
 
+miss = Mission.new
+miss.status = 'complete'
+miss.experience = 10
+miss.mType = 'photo'
+miss.startTime = 1.day.ago
+miss.endTime = 18.hours.ago
+miss.difficulty = 'Tutorial'
+miss.user = user
+miss.save!
+
 user = User.new
 user.surname = 'E'
 user.firstName = 'Mister'
@@ -62,6 +113,16 @@ user.password = 'EEEE'
 user.rank = 2
 user.experience = 20
 user.save!
+
+miss = Mission.new
+miss.status = 'complete'
+miss.experience = 10
+miss.mType = 'photo'
+miss.startTime = 1.day.ago
+miss.endTime = 18.hours.ago
+miss.difficulty = 'Tutorial'
+miss.user = user
+miss.save!
 
 # Missions
 miss = Mission.new

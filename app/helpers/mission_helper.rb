@@ -24,8 +24,11 @@ module MissionHelper
 
   def rejectMission(mission)
     if mission.mType == 'verification'
-      v = Verification.find(mission.mission_type.type_id)
-      v.verifications += 1
+      puts '###### REJECT #####'
+      mission.status = 'rejected'
+      mission.endTime = Time.now
+      mission.save!
+  
       end
     puts '###### REJECT #####'
     mission.status = 'rejected'
@@ -51,11 +54,13 @@ module MissionHelper
       message[:description] = mt.description
     else
       mt = Verification.find(mt.type_id)
+      message[:message] = mt.description
+      message[:image] = mt.image
     end
     message[:description] = mt.description
     message[:title] = mt.title
-
-    message
+    puts message
+    return message
     end
 
   def openMission(mission)
@@ -69,11 +74,7 @@ module MissionHelper
   end
 
   def missionExpired(mission)
-    puts(mission.status)
-    puts('!!!!!!!!', mission.endTime)
-    puts('########', Time.now)
     if mission.status == 'current'
-      puts(mission.endTime < Time.now)
       if mission.endTime < Time.now
         mission.status = 'failed'
         mission.save!

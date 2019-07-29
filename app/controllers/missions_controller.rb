@@ -68,7 +68,6 @@ class MissionsController < ApplicationController
 
       elsif MissionHelper.missionExpired(mission)
         redirect_to action: 'new'
-
         mission = user.missions.last
       end
       message = if mission.status == 'open' # Mission is available...
@@ -95,11 +94,12 @@ class MissionsController < ApplicationController
 
     user = User.find(params[:user_id])
     if params[:id] == 'verify'
+      puts user
+      puts '==================='
       mission = user.missions.last
       if mission.status == 'current'
         # Verify mission is complete - send back incorrect on verification fails
         mt = mission.mission_type
-        puts mission.mType
 
         if mt.photo
           mt = Photo.find(mt.type_id)
@@ -116,26 +116,57 @@ class MissionsController < ApplicationController
 
           imageUrl = AwsHelper.uploadImage(image_path, params[:user_id])
           mt.image = imageUrl
+          puts "User uploaded an image: #{imageUrl}"
 
+          verifyCandidates = []
+          users = User.all
+          users.each do |u|
+            if u.missions.length >= 1
+              userMission = u.missions.last
+              if userMission.status != 'open' && userMission.status != 'current'
+                verifyCandidates.push(u) if u != user
+              end
+            else
+              verifyCandidates.push(u)
+            end
+          end
+
+          while mission.verificationUsers.length < 2
+            candidate = verifyCandidates.sample
+            if mission.verificationUsers.exclude?(candidate)
+              mission.verificationUsers.push(candidate)
+            end
+          end
+          # send url to candidates as veirification mission
+          mission.verificationUsers.each do |u|
+            verifyMission = Mission.new
+            verifyMission.user = u
+            verifyMission.status = 'open'
+            verifyMission.difficulty = 'Easy'
+            verifyMission.mType = 'verification'
+            verifyMission.experience = 5
+            verifyMission.missionTime = 5
+            vmt = MissionType.new
+            vmt[verifyMission.mType] = true
+            vMisType = Verification.new
+            vMisType.origin = mission.id
+            vMisType.title = 'Does this picture contain'
+            vMisType.description = mt.description
+            vMisType.image = imageUrl
+            verifyMission.save!
+            vmt.mission = verifyMission
+            vmt.save!
+            vMisType.mission_type = vmt
+            vMisType.save!
+            vmt.type_id = vMisType.id
+            vmt.save!
+          end
+          mission.status = 'awaiting verification'
+          mission.save!
           render json: {
             message: 'AWAITING VERIFICATION'
           }
-          # verifyCandidates = []
-          # users = User.all
-          # users.each do |u|
-          #   if u.missions.last != 'open' || u.missions.last != 'current'
-          #     verifyCandidates.push(u)
-          #   end
-          # end
 
-          # while mission.verificationUsers.length < 5
-          #   candidate = verifyCandidates.sample
-          #   if mission.verificationUsers.exclude?(candidate)
-          #     mission.verificationUsers.push(candidate)
-          #   end
-          # end
-
-          # send url to candidates as veirification mission
         elsif mt.encryption || mt.decryption
           mt = Cypher.find(mt.type_id)
           if incomingData == mt.solution
@@ -157,18 +188,14 @@ class MissionsController < ApplicationController
 
         elsif mt.verification
           verification = Verification.find(mt.type_id)
-          if verification.verifications >= 3
-            puts 'Mission: SUCCESS'
-            mission.status = 'complete'
-            mission.endTime = Time.now
-            user.experience += mission.experience
-            user.save!
-            render json: {
-              message: 'MISSION COMPLETE'
-            }
-          else
-            puts 'Your submission has been denied.'
-          end
+          mission.status = 'complete'
+          mission.endTime = Time.now
+          user.experience += mission.experience
+          user.save!
+          mission.save!
+          render json: {
+            message: 'MISSION COMPLETE'
+          }
         end
 
       else
