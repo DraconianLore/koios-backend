@@ -94,6 +94,8 @@ class MissionsController < ApplicationController
 
     user = User.find(params[:user_id])
     if params[:id] == 'verify'
+      puts user
+      puts '==================='
       mission = user.missions.last
       if mission.status == 'current'
         # Verify mission is complete - send back incorrect on verification fails
@@ -191,6 +193,7 @@ class MissionsController < ApplicationController
           mission.endTime = Time.now
           user.experience += mission.experience
           user.save!
+          mission.save!
           render json: {
             message: 'MISSION COMPLETE'
           }
