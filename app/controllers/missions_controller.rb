@@ -169,7 +169,9 @@ class MissionsController < ApplicationController
 
         elsif mt.encryption || mt.decryption
           mt = Cypher.find(mt.type_id)
-          if incomingData == mt.solution
+          incomingData = incomingData.downcase.gsub(/[^a-z0-9\s]/i, '')
+          verifySolution = mt.solution.downcase.gsub(/[^a-z0-9\s]/i, '')
+          if incomingData == verifySolution
             puts 'Mission: SUCCESS'
             mission.status = 'complete'
             mission.endTime = Time.now
@@ -180,7 +182,7 @@ class MissionsController < ApplicationController
               message: 'MISSION COMPLETE'
             }
           else
-            puts "#{incomingData} does not match #{mt.solution}"
+            puts "#{incomingData} does not match \n#{mt.solution}"
             render json: {
               message: 'SUBMISSION INVALID'
             }
