@@ -68,7 +68,6 @@ class MissionsController < ApplicationController
 
       elsif MissionHelper.missionExpired(mission)
         redirect_to action: 'new'
-
         mission = user.missions.last
       end
       message = if mission.status == 'open' # Mission is available...
@@ -137,8 +136,8 @@ class MissionsController < ApplicationController
             end
           end
           # send url to candidates as veirification mission
-          mission.verificationUsers.each do
-            user
+          mission.verificationUsers.each do |u|
+            
             verifyMission = Mission.new
             verifyMission.user = u
             verifyMission.status = 'open'
@@ -149,6 +148,7 @@ class MissionsController < ApplicationController
             vmt = MissionType.new
             vmt[verifyMission.mType] = true
             vMisType = Verification.new
+            vMisType.origin = mission.id
             vMisType.title = 'Does this picture contain'
             vMisType.description = mt.description
             vMisType.image = imageUrl

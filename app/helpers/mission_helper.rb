@@ -54,11 +54,13 @@ module MissionHelper
       message[:description] = mt.description
     else
       mt = Verification.find(mt.type_id)
+      message[:message] = mt.description
+      message[:image] = mt.image
     end
     message[:description] = mt.description
     message[:title] = mt.title
-
-    message
+    puts message
+    return message
     end
 
   def openMission(mission)
