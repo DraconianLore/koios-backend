@@ -28,7 +28,6 @@ miss.difficulty = 'Tutorial'
 miss.user = user
 miss.save!
 
-
 user = User.new
 user.surname = 'Bond'
 user.firstName = 'Mister'
