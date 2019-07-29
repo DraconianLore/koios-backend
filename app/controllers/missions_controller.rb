@@ -106,20 +106,20 @@ class MissionsController < ApplicationController
 
           # send image to hosting, get url,
           puts '^^^^^^^^^^^^Start image processing^^^^^^^^^^^^^^^^^^'
-          
+
           image_path = "tmp/my_img#{params[:user_id]}.jpg"
           content_length = incomingPhoto.size
           my_read = incomingPhoto.read(content_length)
           image = open(image_path, 'wb')
           image.write(my_read)
           image.close
-          
+
           imageUrl = AwsHelper.uploadImage(image_path, params[:user_id])
           mt.image = imageUrl
-          
-            render json: {
-              message: 'AWAITING VERIFICATION'
-            }
+
+          render json: {
+            message: 'AWAITING VERIFICATION'
+          }
           # verifyCandidates = []
           # users = User.all
           # users.each do |u|
