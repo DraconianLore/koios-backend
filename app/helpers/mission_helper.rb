@@ -122,12 +122,14 @@ module MissionHelper
               verifyCandidates.push(u)
             end
           end
+          puts "#{verifyCandidates} ///////////////////////////"
           if verifyCandidates.length >= 2
             # create verification missions if there are enough agents without missions
             candidate = verifyCandidates.sample(2)  
             candidate.each do |u|
               mission.verificationUsers.push(u)
             end
+            puts "#{candidate} - ########################################## - #{mission.verificationUsers}"
             mission.verificationUsers.each do |u|
               verifyMission = Mission.new
               verifyMission.user = u
