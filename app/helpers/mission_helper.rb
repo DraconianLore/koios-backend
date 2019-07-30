@@ -125,6 +125,9 @@ module MissionHelper
           if verifyCandidates.length >= 2
             # create verification missions if there are enough agents without missions
             candidate = verifyCandidates.sample(2)  
+            candidate.each do |u|
+              mission.verificationUsers.push(u)
+            end
             mission.verificationUsers.each do |u|
               verifyMission = Mission.new
               verifyMission.user = u
