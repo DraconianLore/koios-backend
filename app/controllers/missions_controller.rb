@@ -164,7 +164,8 @@ class MissionsController < ApplicationController
     mission.status = 'open'
     mission.difficulty = MissionHelper.generateMissionDifficulty.sample
     mission.mType = MissionHelper.generateMissionType(user).sample
-    mission.experience = MissionHelper.generateExperience(mission).sample
+    mission.experience = (MissionHelper.generateExperience(mission).sample / user.rank).ceil
+    puts "MISSION EXP------- #{mission.experience}"
     mission.missionTime = MissionHelper.generateMissionTime(mission)
     mt = MissionType.new
     mt[mission.mType] = true

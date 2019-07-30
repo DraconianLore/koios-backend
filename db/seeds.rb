@@ -16,7 +16,7 @@ user.firstName = 'Mister'
 user.email = 'smith@agents.matrix'
 user.password = 'smith'
 user.rank = 2
-user.experience = 482
+user.experience = 555
 user.save!
 
 miss = Mission.new
@@ -34,7 +34,7 @@ user.surname = 'Bond'
 user.firstName = 'Mister'
 user.email = 'shaken@olive.martini'
 user.password = 'bond'
-user.rank = 2
+user.rank = 3
 user.experience = 20
 user.save!
 
@@ -53,7 +53,7 @@ user.surname = 'Potatohead'
 user.firstName = 'Mister'
 user.email = 'potato@parts.hasbro'
 user.password = 'potatohead'
-user.rank = 2
+user.rank = 1
 user.experience = 20
 user.save!
 
