@@ -124,7 +124,7 @@ module MissionHelper
     end
     if verifyCandidates.length >= 2
       # create verification missions if there are enough agents without missions
-      while candidates.length <3
+      while mission.verificationUsers.length <=2
         candidate = verifyCandidates.sample
         unless mission.verificationUsers.include? candidate
           mission.verificationUsers.push(candidate) 
