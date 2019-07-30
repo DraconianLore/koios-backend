@@ -111,52 +111,51 @@ module MissionHelper
 
   def makeVerificationMissions(mission, mt, user, imageUrl)
     verifyCandidates = []
-          users = User.all
-          users.each do |u|
-            puts "#{u.surname} HAS #{u.missions.length} MISSIONS #######################################"
-            if u.missions.length >= 1
-              userMission = u.missions.last
-              if userMission.status != 'open' && userMission.status != 'current'
-                verifyCandidates.push(u) if u != user
-              end
-            else
-              verifyCandidates.push(u)
-            end
-          end
-          puts "#{verifyCandidates} ///////////////////////////"
-          if verifyCandidates.length >= 2
-            # create verification missions if there are enough agents without missions
-            candidate = verifyCandidates.sample(2)  
-            candidate.each do |u|
-              mission.verificationUsers.push(u)
-            end
-            puts "#{candidate} - ########################################## - #{mission.verificationUsers}"
-            mission.verificationUsers.each do |u|
-              verifyMission = Mission.new
-              verifyMission.user = u
-              verifyMission.status = 'open'
-              verifyMission.difficulty = 'Easy'
-              verifyMission.mType = 'verification'
-              verifyMission.experience = 5
-              verifyMission.missionTime = 5
-              vmt = MissionType.new
-              vmt[verifyMission.mType] = true
-              vMisType = Verification.new
-              vMisType.origin = mission.id
-              vMisType.title = 'Does this picture contain'
-              vMisType.description = mt.description
-              vMisType.image = imageUrl
-              verifyMission.save!
-              vmt.mission = verifyMission
-              vmt.save!
-              vMisType.mission_type = vmt
-              vMisType.save!
-              vmt.type_id = vMisType.id
-              vmt.save!
-            end
-          end
-          mission.status = 'awaiting verification'
-          mission.save!
+    users = User.all
+    users.each do |u|
+      if u.missions.length >= 1
+        userMission = u.missions.last
+        if userMission.status != 'open' && userMission.status != 'current'
+          verifyCandidates.push(u) if u != user
+        end
+      else
+        verifyCandidates.push(u)
+      end
+    end
+    if verifyCandidates.length >= 2
+      # create verification missions if there are enough agents without missions
+      while candidates.length <3
+        candidate = verifyCandidates.sample
+        unless mission.verificationUsers.include? candidate
+          mission.verificationUsers.push(candidate) 
+        end
+      end
+      mission.verificationUsers.each do |u|
+        verifyMission = Mission.new
+        verifyMission.user = u
+        verifyMission.status = 'open'
+        verifyMission.difficulty = 'Easy'
+        verifyMission.mType = 'verification'
+        verifyMission.experience = 5
+        verifyMission.missionTime = 5
+        vmt = MissionType.new
+        vmt[verifyMission.mType] = true
+        vMisType = Verification.new
+        vMisType.origin = mission.id
+        vMisType.title = 'Does this picture contain'
+        vMisType.description = mt.description
+        vMisType.image = imageUrl
+        verifyMission.save!
+        vmt.mission = verifyMission
+        vmt.save!
+        vMisType.mission_type = vmt
+        vMisType.save!
+        vmt.type_id = vMisType.id
+        vmt.save!
+      end
+    end
+    mission.status = 'awaiting verification'
+    mission.save!
   end
 
 
