@@ -131,36 +131,42 @@ class MissionsController < ApplicationController
             end
           end
 
+          i = 0
           while mission.verificationUsers.length < 2
+            i += 1
             candidate = verifyCandidates.sample
             if mission.verificationUsers.exclude?(candidate)
               mission.verificationUsers.push(candidate)
             end
+            break if i == 20
           end
-          # send url to candidates as veirification mission
-          mission.verificationUsers.each do |u|
-            verifyMission = Mission.new
-            verifyMission.user = u
-            verifyMission.status = 'open'
-            verifyMission.difficulty = 'Easy'
-            verifyMission.mType = 'verification'
-            verifyMission.experience = 5
-            verifyMission.missionTime = 5
-            vmt = MissionType.new
-            vmt[verifyMission.mType] = true
-            vMisType = Verification.new
-            vMisType.origin = mission.id
-            vMisType.title = 'Does this picture contain'
-            vMisType.description = mt.description
-            vMisType.image = imageUrl
-            verifyMission.save!
-            vmt.mission = verifyMission
-            vmt.save!
-            vMisType.mission_type = vmt
-            vMisType.save!
-            vmt.type_id = vMisType.id
-            vmt.save!
+
+          if mission.verificationUsers.length > 1
+            mission.verificationUsers.each do |u|
+              verifyMission = Mission.new
+              verifyMission.user = u
+              verifyMission.status = 'open'
+              verifyMission.difficulty = 'Easy'
+              verifyMission.mType = 'verification'
+              verifyMission.experience = 5
+              verifyMission.missionTime = 5
+              vmt = MissionType.new
+              vmt[verifyMission.mType] = true
+              vMisType = Verification.new
+              vMisType.origin = mission.id
+              vMisType.title = 'Does this picture contain'
+              vMisType.description = mt.description
+              vMisType.image = imageUrl
+              verifyMission.save!
+              vmt.mission = verifyMission
+              vmt.save!
+              vMisType.mission_type = vmt
+              vMisType.save!
+              vmt.type_id = vMisType.id
+              vmt.save!
+            end
           end
+
           mission.status = 'awaiting verification'
           mission.save!
           render json: {
