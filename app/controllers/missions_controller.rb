@@ -35,12 +35,7 @@ class MissionsController < ApplicationController
 
   def show
     user = User.find(params[:user_id])
-    # user accepts a mission
-    if params[:id] == 'test'
-      render json: {
-        msg: CyphersHelper.cypher('number', 'abcd 1234 test')
-      }
-    end
+
     if params[:id] == 'accepted'
       mission = user.missions.last
       if mission.status == 'open' || mission.status == 'current'
@@ -50,10 +45,12 @@ class MissionsController < ApplicationController
         mission.save!
       end
       message = MissionHelper.acceptMission(mission)
+
     elsif params[:id] == 'rejected'
       mission = user.missions.last
       MissionHelper.rejectMission(mission)
       message = 'well I dont have time for you either'
+
     elsif params[:id] == 'failed'
       mission = user.missions.last
       mission.status = 'failed'
@@ -61,7 +58,7 @@ class MissionsController < ApplicationController
       mission.save!
       message = 'you are not fit to be an agent!'
 
-      # check for missions from front end
+    # check for missions from front end
     elsif params[:id] == 'current'
       mission = user.missions.last
       if mission.status == 'open'
@@ -88,25 +85,15 @@ class MissionsController < ApplicationController
   def update
     incomingData = params[:message]
     incomingPhoto = params[:photo]
-    puts '############'
-    puts incomingData
-    puts '############'
 
     user = User.find(params[:user_id])
     if params[:id] == 'verify'
-      puts user
-      puts '==================='
       mission = user.missions.last
       if mission.status == 'current'
-        # Verify mission is complete - send back incorrect on verification fails
         mt = mission.mission_type
 
         if mt.photo
           mt = Photo.find(mt.type_id)
-
-          # send image to hosting, get url,
-          puts '^^^^^^^^^^^^Start image processing^^^^^^^^^^^^^^^^^^'
-
           image_path = "tmp/my_img#{params[:user_id]}.jpg"
           content_length = incomingPhoto.size
           my_read = incomingPhoto.read(content_length)
@@ -116,69 +103,16 @@ class MissionsController < ApplicationController
 
           imageUrl = AwsHelper.uploadImage(image_path, params[:user_id])
           mt.image = imageUrl
-          puts "User uploaded an image: #{imageUrl}"
-
-          verifyCandidates = []
-          users = User.all
-          users.each do |u|
-            if u.missions.length >= 1
-              userMission = u.missions.last
-              if userMission.status != 'open' && userMission.status != 'current'
-                verifyCandidates.push(u) if u != user
-              end
-            else
-              verifyCandidates.push(u)
-            end
-          end
-
-          i = 0
-          while mission.verificationUsers.length < 2
-            i += 1
-            candidate = verifyCandidates.sample
-            if mission.verificationUsers.exclude?(candidate)
-              mission.verificationUsers.push(candidate)
-            end
-            break if i == 20
-          end
-
-          if mission.verificationUsers.length > 1
-            mission.verificationUsers.each do |u|
-              verifyMission = Mission.new
-              verifyMission.user = u
-              verifyMission.status = 'open'
-              verifyMission.difficulty = 'Easy'
-              verifyMission.mType = 'verification'
-              verifyMission.experience = 5
-              verifyMission.missionTime = 5
-              vmt = MissionType.new
-              vmt[verifyMission.mType] = true
-              vMisType = Verification.new
-              vMisType.origin = mission.id
-              vMisType.title = 'Does this picture contain'
-              vMisType.description = mt.description
-              vMisType.image = imageUrl
-              verifyMission.save!
-              vmt.mission = verifyMission
-              vmt.save!
-              vMisType.mission_type = vmt
-              vMisType.save!
-              vmt.type_id = vMisType.id
-              vmt.save!
-            end
-          end
-
-          mission.status = 'awaiting verification'
-          mission.save!
+          puts "User #{user} uploaded an image: #{imageUrl}"
+          MissionHelper.makeVerificationMissions(mission, mt, user, imageUrl)
           render json: {
             message: 'AWAITING VERIFICATION'
           }
 
         elsif mt.encryption || mt.decryption
           mt = Cypher.find(mt.type_id)
-          incomingData = incomingData.downcase.gsub(/[^a-z0-9\s]/i, '')
-          verifySolution = mt.solution.downcase.gsub(/[^a-z0-9\s]/i, '')
-          if incomingData == verifySolution
-            puts 'Mission: SUCCESS'
+
+          if MissionHelper.verifyCypher(incomingData, mt.solution)
             mission.status = 'complete'
             mission.endTime = Time.now
             mission.save!
@@ -188,14 +122,22 @@ class MissionsController < ApplicationController
               message: 'MISSION COMPLETE'
             }
           else
-            puts "#{incomingData} does not match \n#{mt.solution}"
+            puts "Cypher verification:\n#{incomingData} does not match \n#{mt.solution}"
             render json: {
-              message: 'SUBMISSION INVALID'
+              message: 'INVALID INTERPRETATION'
             }
           end
 
         elsif mt.verification
           verification = Verification.find(mt.type_id)
+          verificationOrigin = Mission.find(verification.origin)
+          verificationOrigin.verifications += 1
+          if verificationOrigin.verifications >= verificationOrigin.verificationUsers.length
+            verificationOrigin.endTime = Time.now
+            verificationOrigin.status = 'complete'
+          end
+          verificationOrigin.save!
+
           mission.status = 'complete'
           mission.endTime = Time.now
           user.experience += mission.experience
@@ -220,13 +162,13 @@ class MissionsController < ApplicationController
     mission = Mission.new
     mission.user = user
     mission.status = 'open'
-    mission.difficulty = generateMissionDifficulty.sample
-    mission.mType = generateMissionType(user).sample
-    mission.experience = generateExperience(mission).sample
-    mission.missionTime = generateMissionTime(mission)
+    mission.difficulty = MissionHelper.generateMissionDifficulty.sample
+    mission.mType = MissionHelper.generateMissionType(user).sample
+    mission.experience = MissionHelper.generateExperience(mission).sample
+    mission.missionTime = MissionHelper.generateMissionTime(mission)
     mt = MissionType.new
     mt[mission.mType] = true
-    misType = generateMissionByType(mission.mType, mission.difficulty)
+    misType = MissionHelper.generateMissionByType(mission.mType, mission.difficulty)
 
     mission.save!
     mt.mission = mission
@@ -243,68 +185,4 @@ class MissionsController < ApplicationController
     }
   end
 
-  private
-
-  def generateMissionTime(mission)
-    mission.experience * 2.2
-  end
-
-  def generateMissionByType(type, difficulty)
-    case type
-    when 'photo'
-      mission = Photo.new
-      mission.title = 'TAKE A PHOTO OF'
-      mission.description = $photoTypes[difficulty].to_a.sample.downcase
-    when 'encryption'
-      mission = Cypher.new
-      mission.encrypt = true
-      mission.encryptionType = $encryptionType.sample
-      mission.title = "Encrypt this using a #{mission.encryptionType} cypher"
-      mission.message = $encryptionPhrases[difficulty].to_a.sample.downcase
-      mission.solution = CyphersHelper.cypher(mission.encryptionType, mission.message)
-      mission.description = CyphersHelper.instructions(mission.encryptionType)
-
-    when 'decryption'
-      mission = Cypher.new
-      mission.encrypt = false
-      mission.encryptionType = $encryptionType.sample
-      mission.title = 'Decrypt this message'
-      mission.solution = $encryptionPhrases[difficulty].to_a.sample.downcase
-      mission.message = CyphersHelper.cypher(mission.encryptionType, mission.solution)
-      mission.description = "That would be too easy wouldn't it"
-    end
-    mission
-  end
-
-  def generateMissionDifficulty
-    difficulty = []
-    difficulty.fill('Easy', difficulty.size, 120)
-    difficulty.fill('Medium', difficulty.size, 59)
-    difficulty.fill('Hard', difficulty.size, 20)
-    difficulty.fill('Mission Impossible', difficulty.size, 1)
-    difficulty
-  end
-
-  def generateMissionType(user)
-    missionChoices = []
-    missionChoices.push('photo') if user.rank > 0
-    if user.rank > 1
-      missionChoices.push('encryption')
-      missionChoices.push('decryption')
-    end
-    missionChoices
-  end
-
-  def generateExperience(mission)
-    if mission.difficulty == 'Easy'
-      exp = 8..14
-    elsif mission.difficulty == 'Medium'
-      exp = 15..24
-    elsif mission.difficulty == 'Hard'
-      exp = 24..39
-    elsif mission.difficulty == 'Mission Impossible'
-      exp = 40..80
-    end
-    exp.to_a
-  end
 end

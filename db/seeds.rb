@@ -9,6 +9,7 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 # Users
+
 user = User.new
 user.surname = 'Smith'
 user.firstName = 'Mister'

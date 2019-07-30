@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
+include ActionView::Helpers::DateHelper
+include CyphersHelper
+
+
 module MissionHelper
+
   def acceptMission(mission)
     message = {
       id: mission.id,
@@ -24,17 +29,35 @@ module MissionHelper
 
   def rejectMission(mission)
     if mission.mType == 'verification'
-      puts '###### REJECT #####'
+      # todo - add logic to verify original mission
+      verification = Verification.find(mt.type_id)
+      verificationOrigin = Mission.find(verification.origin)
+      verificationOrigin.verifications += 1
+      if verificationOrigin.verifications >= verificationOrigin.verificationUsers.length
+        verificationOrigin.endTime = Time.now
+        verificationOrigin.status = 'complete'
+      end
+      verificationOrigin.save!
+
       mission.status = 'rejected'
       mission.endTime = Time.now
       mission.save!
   
       end
-    puts '###### REJECT #####'
     mission.status = 'rejected'
     mission.endTime = Time.now
     mission.save!
-    end
+  end
+
+  def verifyCypher(answer, solution)
+    answer = answer.downcase.gsub(/[^a-z]/, '')
+    solution = solution.downcase.gsub(/[^a-z]/, '')
+    # strip all punctuation and spaces and compare raw strings
+
+    return answer == solution
+
+  end
+
 
   def currentMission(mission)
     mEndTime = mission.endTime.to_f * 1000
@@ -52,6 +75,7 @@ module MissionHelper
       mt = Cypher.find(mt.type_id)
       message[:message] = mt.message
       message[:description] = mt.description
+      puts mt.solution
     else
       mt = Verification.find(mt.type_id)
       message[:message] = mt.description
@@ -59,7 +83,6 @@ module MissionHelper
     end
     message[:description] = mt.description
     message[:title] = mt.title
-    puts message
     return message
     end
 
@@ -83,4 +106,122 @@ module MissionHelper
     end
     false
   end
+
+
+
+  def makeVerificationMissions(mission, mt, user, imageUrl)
+    verifyCandidates = []
+          users = User.all
+          users.each do |u|
+            if u.missions.length >= 1
+              userMission = u.missions.last
+              if userMission.status != 'open' && userMission.status != 'current'
+                verifyCandidates.push(u) if u != user
+              end
+            else
+              verifyCandidates.push(u)
+            end
+          end
+          if verifyCandidates.length >= 2
+            # create verification missions if there are enough agents without missions
+            candidate = verifyCandidates.sample(2)  
+            mission.verificationUsers.each do |u|
+              verifyMission = Mission.new
+              verifyMission.user = u
+              verifyMission.status = 'open'
+              verifyMission.difficulty = 'Easy'
+              verifyMission.mType = 'verification'
+              verifyMission.experience = 5
+              verifyMission.missionTime = 5
+              vmt = MissionType.new
+              vmt[verifyMission.mType] = true
+              vMisType = Verification.new
+              vMisType.origin = mission.id
+              vMisType.title = 'Does this picture contain'
+              vMisType.description = mt.description
+              vMisType.image = imageUrl
+              verifyMission.save!
+              vmt.mission = verifyMission
+              vmt.save!
+              vMisType.mission_type = vmt
+              vMisType.save!
+              vmt.type_id = vMisType.id
+              vmt.save!
+            end
+          end
+          mission.status = 'awaiting verification'
+          mission.save!
+  end
+
+
+
+
+  # Mission Generation Helpers
+
+  def generateMissionTime(mission)
+    mission.experience * 2.2
+  end
+
+  
+  def generateMissionDifficulty
+    difficulty = []
+    difficulty.fill('Easy', difficulty.size, 120)
+    difficulty.fill('Medium', difficulty.size, 59)
+    difficulty.fill('Hard', difficulty.size, 20)
+    difficulty.fill('Mission Impossible', difficulty.size, 1)
+    difficulty
+  end
+
+  def generateMissionType(user)
+    missionChoices = []
+    missionChoices.push('photo') if user.rank > 0
+    if user.rank > 1
+      missionChoices.push('encryption')
+      if user.experience > 500
+        missionChoices.push('decryption')
+      end
+    end
+    missionChoices
+  end
+  
+  def generateExperience(mission)
+    if mission.difficulty == 'Easy'
+      exp = 8..14
+    elsif mission.difficulty == 'Medium'
+      exp = 15..24
+    elsif mission.difficulty == 'Hard'
+      exp = 24..39
+    elsif mission.difficulty == 'Mission Impossible'
+      exp = 40..80
+    end
+    exp.to_a
+  end
+  
+  def generateMissionByType(type, difficulty)
+    case type
+    when 'photo'
+      mission = Photo.new
+      mission.title = 'TAKE A PHOTO OF'
+      mission.description = $photoTypes[difficulty].to_a.sample.downcase
+    when 'encryption'
+      mission = Cypher.new
+      mission.encrypt = true
+      mission.encryptionType = $encryptionType.sample
+      mission.title = "Encrypt this using a #{mission.encryptionType} cypher"
+      mission.message = $encryptionPhrases[difficulty].to_a.sample.downcase
+      mission.solution = CyphersHelper.cypher(mission.encryptionType, mission.message)
+      mission.description = CyphersHelper.instructions(mission.encryptionType)
+  
+    when 'decryption'
+      mission = Cypher.new
+      mission.encrypt = false
+      mission.encryptionType = $encryptionType.sample
+      mission.title = 'Decrypt this message'
+      mission.solution = $encryptionPhrases[difficulty].to_a.sample.downcase
+      mission.message = CyphersHelper.cypher(mission.encryptionType, mission.solution)
+      mission.description = "That would be too easy wouldn't it"
+    end
+    mission
+  end
+
 end

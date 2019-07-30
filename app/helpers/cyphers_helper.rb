@@ -6,7 +6,6 @@ module CyphersHelper
   end
 
   def cypher(type, message)
-    puts message
     case type
     when 'reverse'
       return c_reverse(message)
