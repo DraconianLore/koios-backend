@@ -114,6 +114,7 @@ module MissionHelper
           users = User.all
           users.each do |u|
             if u.missions.length >= 1
+              puts u.surname
               userMission = u.missions.last
               if userMission.status != 'open' && userMission.status != 'current'
                 verifyCandidates.push(u) if u != user
