@@ -124,7 +124,7 @@ class MissionsController < ApplicationController
           else
             puts "Cypher verification:\n#{incomingData} does not match \n#{mt.solution}"
             render json: {
-              message: 'INVALID INTERPRETATION'
+              message: 'INVALID SUBMISSION'
             }
           end
 
@@ -185,5 +185,4 @@ class MissionsController < ApplicationController
       mission: misType
     }
   end
-
 end
