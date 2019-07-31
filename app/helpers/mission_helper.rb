@@ -198,9 +198,9 @@ module MissionHelper
       mission = Photo.new
       mission.title = ['TAKE A PHOTO OF','TAKE A SELFIE WITH'].sample
       if mission.title == 'TAKE A PHOTO OF'
-        mission.description = "#{$photoTypes[difficulty].to_a.sample}\n(Don't forget to ask for permission)"
+        mission.description = $photoTypes[difficulty].to_a.sample}
       else
-        mission.description = $selfieTypes[difficulty].to_a.sample
+        mission.description = "#{$selfieTypes[difficulty].to_a.sample}\n(Don't forget to ask for permission)"
       end
     when 'encryption'
       mission = Cypher.new
