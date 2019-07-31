@@ -2,6 +2,13 @@
 
 include ActionView::Helpers::DateHelper
 include CyphersHelper
+
+$encryptionType = JSON.parse(File.read('./app/assets/json/encTypes.json')).to_a
+$encryptionPhrases = JSON.parse(File.read('./app/assets/json/encPhrases.json'))
+$photoTypes = JSON.parse(File.read('./app/assets/json/picTypes.json'))
+$selfieTypes = JSON.parse(File.read('./app/assets/json/selfieTypes.json'))
+
+
 module MissionHelper
   def acceptMission(mission)
     message = {
@@ -189,8 +196,12 @@ module MissionHelper
     case type
     when 'photo'
       mission = Photo.new
-      mission.title = 'TAKE A PHOTO OF'
-      mission.description = $photoTypes[difficulty].to_a.sample.downcase
+      mission.title = ['TAKE A PHOTO OF','TAKE A SELFIE WITH'].sample
+      if mission.title == 'TAKE A PHOTO OF'
+        mission.description = $photoTypes[difficulty].to_a.sample
+      else
+        mission.description = $selfieTypes[difficulty].to_a.sample
+      end
     when 'encryption'
       mission = Cypher.new
       mission.encrypt = true

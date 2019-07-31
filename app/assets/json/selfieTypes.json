@@ -1,0 +1,27 @@
+{
+    "Easy": [
+        "someone in a red shirt",
+        "someone in a green shirt",
+        "someone in a blue shirt"
+    ],
+
+    "Medium": [
+        "a construction worker",
+        "someone in a suit",
+        "someone in a dress"
+    ],
+
+    "Hard": [
+        "a farm animal",
+        "someone in a ball gown/evening dress",
+        "a fireman in uniform",
+        "a police officer in uniform"
+    ],
+
+    "Impossible": [
+        "someone in a three piece suit",
+        "a celebrity that most people know",
+        "a cultural landmark"
+    ]
+
+}

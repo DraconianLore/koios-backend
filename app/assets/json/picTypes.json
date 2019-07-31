@@ -2,15 +2,13 @@
     "Easy": [
         "a tree",
         "a skyscraper",
-        "someone in a red shirt",
-        "someone in a green shirt",
-        "someone in a blue shirt"
+        "a river or creek"
     ],
 
     "Medium": [
         "a construction crane",
-        "a bird in flight"
-
+        "a bird in flight",
+        "the ocean"
     ],
 
     "Hard": [
@@ -20,9 +18,8 @@
     ],
 
     "Impossible": [
-        "a view from the top of a mountain",
-        "someone in a three piece suit",
-        "yourself with a cultural landmark"
+        "the view from the top of a mountain",
+        "two agents showing their previous missions"
     ]
 
 }
