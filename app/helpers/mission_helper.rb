@@ -67,7 +67,7 @@ module MissionHelper
       mt = Cypher.find(mt.type_id)
       message[:message] = mt.message
       message[:description] = mt.description
-      puts "SOLUTION - for demo purposes /////// #{mt.solution.upCase} ////////"
+      puts "SOLUTION - for demo purposes /////// #{mt.solution.upcase} ////////"
     else
       mt = Verification.find(mt.type_id)
       message[:message] = mt.description
