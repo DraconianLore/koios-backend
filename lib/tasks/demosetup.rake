@@ -31,6 +31,7 @@ task :demoSetup => :environment do
     misType.save!
     mt.type_id = misType.id
     mt.save!
+    user.save!
     puts "User 1 setup complete"
 
     user = User.second
@@ -62,6 +63,7 @@ task :demoSetup => :environment do
     misType.mission_type = mt
     misType.save!
     mt.type_id = misType.id
+    user.save!
     mt.save!
     puts "User 2 setup complete"
     
