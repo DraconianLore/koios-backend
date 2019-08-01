@@ -1,28 +1,35 @@
 {
     "Easy": [
-        "this sucks",
+        "Welcome to Lighthouse Labs",
         "what is your plan for today",
         "groovy baby",
-        "vignere",
-        "gronsfeld",
-        "operative"
+        "the bird is in the air",
+        "secret agent",
+        "operative",
+        "Don't Panic",
+        "I never could get the hang of Thursdays.",
+        "Time is a river, and books are boats.",
+        "The value of an idea lies in the using of it."
     ],
-
     "Medium": [
-        "Secret agent man secret agent man They've given you a number and taken away your name",
-        "When we have shuffled off this mortal coil Must give us pause Theres the respect That makes calamity of so long life",
-        "How often have I said that when you have excluded the impossible whatever remains however improbable must be the truth"
-
+        "Small minds have always lashed out at what they don't understand.",
+        "Can you keep secrets? Can you know a thing and never say it again?",
+        "For a moment, nothing happened. Then, after a second or so, nothing continued to happen",
+        "A common mistake that people make when trying to design something completely foolproof is to underestimate the ingenuity of complete fools.",
+        "Secret agent man, secret agent man, They've given you a number and taken away your name",
+        "When we have shuffled off this mortal coil, Must give us pause, Theres the respect That makes calamity of so long life",
+        "Nothing travels faster than the speed of light with the possible exception of bad news, which obeys its own special laws.",
+        "How often have I said that when you have excluded the impossible, whatever remains however improbable must be the truth"
     ],
-
     "Hard": [
-        "When we have shuffled off this mortal coil Must give us pause Theres the respect That makes calamity of so long life",
+        "Quis custodiet ipsos custodes? Who will guard the guards?",
+        "When everything seems to be going against you, remember that the airplane takes off against the wind, not with it",
+        "There is a theory which states that if ever anyone discovers exactly what the Universe is for and why it is here, it will instantly disappear and be replaced by something even more bizarre and inexplicable. There is another theory which states that this has already happened.",
         "According to all known laws of aviation there is no way a bee should be able to fly Its wings are too small to get its fat little body off the ground The bee of course flies anyway because bees dont care what humans think is impossible"
-
     ],
-
     "Impossible": [
+        "Nobody expects the Spanish Inquisition! Our chief weapon is surprise! Surprise and fear. Fear and surprise. Our two weapons are fear and surprise – and ruthless efficiency! Our three weapons are fear, and surprise, and ruthless efficiency, and an almost fanatical devotion to the Pope. Our four, no, among our weapons are such elements as fear, surpr- I’ll come in again.",
+        "Apart from the sanitation, the medicine, education, wine, public order, irrigation, roads, the fresh-water system, and public health, what have the Romans ever done for us?",
         "A wealthy wise old woman feared that her daughter was lazy and, as a result, rather stupid. When the old woman died, her will stipulated that her assets were to be liquidated and a check was to be written for the full amount. The check was to be placed in one of three envelopes. The other two envelopes would contain a blank piece of paper. If the daughter could determine from the writing on the envelope which envelope contained the check, she would inherit her mother’s fortune. Otherwise, the fortune would go to the old woman’s favorite charity for animals. The daughter was not allowed to touch the envelopes. Her decision had to be made based on the writing on the envelopes. The daughter was told that only one envelope had a true statement and that the other two statements were false. The envelopes had the following writing: This envelope does not have the check. This envelope has the check. The second envelope does not have the check. Which envelope should the daughter pick?"
     ]
-
 }

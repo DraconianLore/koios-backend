@@ -29,6 +29,31 @@ miss.difficulty = 'Tutorial'
 miss.user = user
 miss.save!
 
+# user 1 seed for demo
+miss = Mission.new
+miss.user = user
+miss.status = 'open'
+miss.difficulty = 'Medium'
+miss.mType = 'decryption'
+miss.experience = 600
+miss.missionTime = 32
+mt = MissionType.new
+mt.decryption = true,
+misType = Cypher.new
+misType.encrypt = false
+misType.enctyptionType = "letterShift7"
+misType.title = 'Decrypt this message'
+misType.solution = "how often have i said that when you have excluded the impossible whatever remains however improbable must be the truth"
+misType.message = "ovd vmalu ohcl p zhpk aoha dolu fvb ohcl lejsbklk aol ptwvzzpisl dohalcly ylthpuz ovdlcly ptwyvihisl tbza il aol aybao"
+misType.description = "That would be too easy wouldn't it"
+miss.save!
+mt.mission = missmt.save!
+misType.mission_type = mt
+misType.save!
+mt.type_id = misType.id
+mt.save!
+# end demo seed
+
 user = User.new
 user.surname = 'Bond'
 user.firstName = 'Mister'
@@ -47,6 +72,31 @@ miss.endTime = 18.hours.ago
 miss.difficulty = 'Tutorial'
 miss.user = user
 miss.save!
+
+# user 2 seed for demo
+miss = Mission.new
+miss.user = user
+miss.status = 'open'
+miss.difficulty = 'Easy'
+miss.mType = 'encryption'
+miss.experience = 600
+miss.missionTime = 32
+mt = MissionType.new
+mt.encryption = true,
+misType = Cypher.new
+misType.encrypt = true
+misType.enctyptionType = 'reverse'
+misType.title = 'Encrypt this using a reverse cypher'
+misType.solution = "sbal esuohthgil ot emoclew"
+misType.message =  "Welcome to Lighthouse Labs"
+misType.description = "Write the message in reverse \nFor example: 'the cat' becomes 'tac eht'"
+miss.save!
+mt.mission = missmt.save!
+misType.mission_type = mt
+misType.save!
+mt.type_id = misType.id
+mt.save!
+# end demo seed
 
 user = User.new
 user.surname = 'Potatohead'
