@@ -47,7 +47,8 @@ misType.solution = "how often have i said that when you have excluded the imposs
 misType.message = "ovd vmalu ohcl p zhpk aoha dolu fvb ohcl lejsbklk aol ptwvzzpisl dohalcly ylthpuz ovdlcly ptwyvihisl tbza il aol aybao"
 misType.description = "That would be too easy wouldn't it"
 miss.save!
-mt.mission = missmt.save!
+mt.mission = miss
+mt.save!
 misType.mission_type = mt
 misType.save!
 mt.type_id = misType.id
@@ -91,7 +92,8 @@ misType.solution = "sbal esuohthgil ot emoclew"
 misType.message =  "Welcome to Lighthouse Labs"
 misType.description = "Write the message in reverse \nFor example: 'the cat' becomes 'tac eht'"
 miss.save!
-mt.mission = missmt.save!
+mt.mission = miss
+mt.save!
 misType.mission_type = mt
 misType.save!
 mt.type_id = misType.id
