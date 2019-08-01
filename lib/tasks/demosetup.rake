@@ -2,6 +2,7 @@ desc "Clear current mission and reset to specific missions for demo"
 task :demoSetup => :environment do
 
     user = User.first
+    user.experience = 530
     mission = user.missions.last
     mission.status = 'failed'
     mission.endTime = Time.now
@@ -33,6 +34,7 @@ task :demoSetup => :environment do
     puts "User 1 setup complete"
 
     user = User.second
+    user.experience = 333
     mission = user.missions.last
     mission.status = 'failed'
     mission.endTime = Time.now
