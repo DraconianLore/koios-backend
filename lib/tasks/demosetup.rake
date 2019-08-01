@@ -19,10 +19,10 @@ task :demoSetup => :environment do
     mt.decryption = true,
     misType = Cypher.new
     misType.encrypt = false
-    misType.encryptionType = "letterShift7"
+    misType.encryptionType = "number"
     misType.title = 'Decrypt this message'
-    misType.solution = "how often have i said that when you have excluded the impossible whatever remains however improbable must be the truth"
-    misType.message = "ovd vmalu ohcl p zhpk aoha dolu fvb ohcl lejsbklk aol ptwvzzpisl dohalcly ylthpuz ovdlcly ptwyvihisl tbza il aol aybao"
+    misType.solution = "Thank you"
+    misType.message = "2008011411 251521"
     misType.description = "That would be too easy wouldn't it"
     miss.save!
     mt.mission = miss
