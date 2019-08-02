@@ -8,12 +8,9 @@
 - **Backend**: Ruby on Rails 
 - **Database**: PostgreSQL
 
---------------------------------------
-
 ## Team members:
 - [Steven Wing](https://draconianlore.github.io)
 - [Seth Marks](https://S-Marks.github.io)
-# Κοῖος
 
 ---------------------------------------
 
@@ -37,10 +34,12 @@ As they gain trust, they gain ranks in the organisation which leads to harder mi
 ## Setup:
 Eventually we plan on adding our app to the Apple App Store and Google Play, but for now the back-end is hosted on Heroku, and the front-end needs to be run on a local machine using Expo.
 
-Clone this repository if you want to use that seperate from the Heroku hosted one, and also the front(link above).
+Clone this repository, and also the backend(link above) if you want to use that seperate from the Heroku hosted one.
 ### Front-end:
 
 - run `npm install` to get all required dependancies
+- create a `.env` file in your root directory and add your backend url
+    * BASE_URL=/your backend url/
 - run `npm start` to start the app
 - Download the 'Expo' app on your device
 - scan the QR Code that appears in your terminal(or browser if you prefer)
@@ -49,10 +48,13 @@ Clone this repository if you want to use that seperate from the Heroku hosted on
 
 - run `bundle install` to get all the required dependancies
 - create a `.env` file in your root directory and add your AWS S3 keys in
- - AWS_ACCESS_KEY_ID=/your key here/
- - AWS_SECRET_ACCESS_KEY=/your key here/
- - AWS_REGION=/your AWS region here/
+    * AWS_ACCESS_KEY_ID=/your key here/
+    * AWS_SECRET_ACCESS_KEY=/your key here/
+    * AWS_REGION=/your AWS region here/
 - run `rails s` to start the server on default ports
  - alternative run `rails s -p /your port here/ -b 0.0.0.0` to run on your preferred port at localhost
+
+
+
 
 
