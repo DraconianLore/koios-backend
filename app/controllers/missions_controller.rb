@@ -4,6 +4,7 @@ include ActionView::Helpers::DateHelper
 include CyphersHelper
 include MissionHelper
 include AwsHelper
+include UserHelper
 require 'base64'
 
 $encryptionType = JSON.parse(File.read('./app/assets/json/encTypes.json')).to_a
@@ -75,9 +76,11 @@ class MissionsController < ApplicationController
                   'no mission'
                 end
     end
+    rankUp = UserHelper.RankCheck(user) 
     render json: {
       message: message,
-      experience: user.experience
+      experience: user.experience,
+      rank: user.rank
     }
   end
 

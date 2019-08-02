@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+include ActionView::Helpers::DateHelper
+include UserHelper
 
 class UsersController < ApplicationController
   def index
@@ -20,8 +22,10 @@ class UsersController < ApplicationController
 
       agentName = userId.surname
       message = "Welcome back Agent #{agentName}"
+      rankUp = UserHelper.RankCheck(userId) # declare rankUp as a variable for if we want to send it to frontend to show a rank up screen
       exp = userId.experience
       rank = userId.rank
+      
     else
       message = 'Unauthorized access!'
     end
