@@ -80,7 +80,8 @@ class MissionsController < ApplicationController
     render json: {
       message: message,
       experience: user.experience,
-      rank: user.rank
+      rank: user.rank,
+      rankUp: rankUp
     }
   end
 
